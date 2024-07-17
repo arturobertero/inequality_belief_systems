@@ -1,0 +1,261 @@
+---
+title: "Stability - Bootstrap"
+subtitle: "Inequality belief systems: what they look like, how to study them, and why they matter"
+#date: "`r format(Sys.time(), '%d %B %Y')`"
+output:
+  prettydoc::html_pretty:
+    theme: architect
+    fig_caption: yes
+    df_print: paged
+---
+
+<style>
+body {
+text-align: justify}
+</style>
+
+```{r Setup, message=FALSE, warning=FALSE, include=FALSE}
+knitr::opts_chunk$set(
+	message = FALSE,
+	warning = FALSE,
+	echo = FALSE,
+	fig.align="center",
+	out.width='\\textwidth'
+	)
+```
+
+
+# Input
+
+## Packages 
+
+```{r message=FALSE, warning=FALSE}
+library(pacman)
+p_load(tidyverse, janitor, here, haven, labelled, sjmisc, skimr, ggplot2, jtools,
+       stargazer, qgraph, Matrix, igraph, sna, NetworkComparisonTest, bootnet,
+       rio, foreign, matrixcalc, corclass, NetworkToolbox, conflicted, 
+       EGAnet, texreg, ggpubr, lavaan, ltm, kableExtra, sjPlot, psych, nFactors,
+       ggcorrplot, ggeffects, summarytools, GGally, ggnet2)
+
+```
+
+```{r}
+#Packages conflicts
+conflict_prefer("select", "dplyr")
+conflict_prefer("filter", "dplyr")
+conflict_prefer("lag", "dplyr")
+conflict_prefer("labelled", "to_factor")
+conflict_prefer("igraph", "compose")
+conflict_prefer("igraph", "%s%")
+
+#Options
+options(max.print=999999)
+options(scipen=999)
+```
+
+## Database
+
+```{r}
+#Load database
+load(here("Output", "databases_stability.RData"))
+
+```
+
+# Processing
+
+## Stability (bootstrap)
+
+```{r}
+#US1
+
+# Perform Bootstrap EGA
+ega_us_1_boot <- bootEGA(
+  data = cca_us_1,
+  iter = 2000,
+  seed = 1,
+  EGA.type = "EGA",
+  model = "glasso",
+  ncores = 4)
+
+#compare bootstrapped vs sample EGA
+ega_us_1_boot_sample <- compare.EGA.plots(
+  ega_us_1, ega_us_1_boot,
+  labels = c("Empirical", "Bootstrap"),
+  plot.args = list(plot.type = "qgraph",
+                   vsize = 15, 
+                   node.alpha = 0.8,
+                   legend.position = "none", legend.size = NA,
+                   edge.color = c("royalblue", "tomato")))
+
+ggsave(here("Output", "Supplemental", "ega_us_1_boot_sample.png"), 
+       ega_us_1_boot_sample$all, height = 12, width = 12)
+
+#stability of dimensions
+ega_us_1_stability = dimensionStability(ega_us_1_boot)
+
+ggsave(here("Output", "Supplemental", "ega_us_1_stability.png"), 
+       ega_us_1_stability$item.stability$plot)
+
+```
+
+```{r}
+#US2
+
+# Perform Bootstrap EGA
+ega_us_2_boot <- bootEGA(
+  data = cca_us_2,
+  iter = 2000,
+  seed = 1,
+  EGA.type = "EGA",
+  model = "glasso",
+  ncores = 4)
+
+#compare bootstrapped vs sample EGA
+ega_us_2_boot_sample <- compare.EGA.plots(
+  ega_us_2, ega_us_2_boot,
+  labels = c("Empirical", "Bootstrap"),
+  plot.args = list(plot.type = "qgraph",
+                   vsize = 15, 
+                   node.alpha = 0.8,
+                   legend.position = "none", legend.size = NA,
+                   edge.color = c("royalblue", "tomato")))
+
+ggsave(here("Output", "Supplemental", "ega_us_2_boot_sample.png"), 
+       ega_us_2_boot_sample$all, height = 12, width = 12)
+
+#stability of dimensions
+ega_us_2_stability = dimensionStability(ega_us_2_boot)
+
+ggsave(here("Output", "Supplemental", "ega_us_2_stability.png"), 
+       ega_us_2_stability$item.stability$plot)
+
+```
+
+```{r}
+#NL1
+
+# Perform Bootstrap EGA
+ega_nl_1_boot <- bootEGA(
+  data = cca_nl_1,
+  iter = 2000,
+  seed = 1,
+  EGA.type = "EGA",
+  model = "glasso",
+  ncores = 4)
+
+#compare bootstrapped vs sample EGA
+ega_nl_1_boot_sample <- compare.EGA.plots(
+  ega_nl_1, ega_nl_1_boot,
+  labels = c("Empirical", "Bootstrap"),
+  plot.args = list(plot.type = "qgraph",
+                   vsize = 15, 
+                   node.alpha = 0.8,
+                   legend.position = "none", legend.size = NA,
+                   edge.color = c("royalblue", "tomato")))
+
+ggsave(here("Output", "Supplemental", "ega_nl_1_boot_sample.png"), 
+       ega_nl_1_boot_sample$all, height = 12, width = 12)
+
+#stability of dimensions
+ega_nl_1_stability = dimensionStability(ega_nl_1_boot)
+
+ggsave(here("Output", "Supplemental", "ega_nl_1_stability.png"), 
+       ega_nl_1_stability$item.stability$plot)
+```
+
+```{r}
+#NL1
+
+# Perform Bootstrap EGA
+ega_nl_2_boot <- bootEGA(
+  data = cca_nl_2,
+  iter = 2000,
+  seed = 1,
+  EGA.type = "EGA",
+  model = "glasso",
+  ncores = 4)
+
+#compare bootstrapped vs sample EGA
+ega_nl_2_boot_sample <- compare.EGA.plots(
+  ega_nl_2, ega_nl_2_boot,
+  labels = c("Empirical", "Bootstrap"),
+  plot.args = list(plot.type = "qgraph",
+                   vsize = 15, 
+                   node.alpha = 0.8,
+                   legend.position = "none", legend.size = NA,
+                   edge.color = c("royalblue", "tomato")))
+
+ggsave(here("Output", "Supplemental", "ega_nl_2_boot_sample.png"), 
+       ega_nl_2_boot_sample$all, height = 12, width = 12)
+
+#stability of dimensions
+ega_nl_2_stability = dimensionStability(ega_nl_2_boot)
+
+ggsave(here("Output", "Supplemental", "ega_nl_2_stability.png"), 
+       ega_nl_2_stability$item.stability$plot)
+```
+
+```{r}
+#US full sample
+
+# Perform Bootstrap EGA
+ega_us_full_boot <- bootEGA(
+  data = data_us_net,
+  iter = 2000,
+  seed = 1,
+  EGA.type = "EGA",
+  model = "glasso",
+  ncores = 4)
+
+#compare bootstrapped vs sample EGA
+ega_us_full_boot_sample <- compare.EGA.plots(
+  US_ega, ega_us_full_boot,
+  labels = c("Empirical", "Bootstrap"),
+  plot.args = list(plot.type = "qgraph",
+                   vsize = 15, 
+                   node.alpha = 0.8,
+                   legend.position = "none", legend.size = NA,
+                   edge.color = c("royalblue", "tomato")))
+
+ggsave(here("Output", "Supplemental", "ega_us_full_boot_sample.png"), 
+       ega_us_full_boot_sample$all, height = 12, width = 12)
+
+#stability of dimensions
+ega_us_full_stability = dimensionStability(ega_us_full_boot)
+
+ggsave(here("Output", "Supplemental", "ega_us_full_stability.png"), 
+       ega_us_full_stability$item.stability$plot)
+```
+
+```{r}
+#NL full sample
+
+# Perform Bootstrap EGA
+ega_nl_full_boot <- bootEGA(
+  data = data_nl_net,
+  iter = 2000,
+  seed = 1,
+  EGA.type = "EGA",
+  model = "glasso",
+  ncores = 4)
+
+#compare bootstrapped vs sample EGA
+ega_nl_full_boot_sample <- compare.EGA.plots(
+  NL_ega, ega_nl_full_boot,
+  labels = c("Empirical", "Bootstrap"),
+  plot.args = list(plot.type = "qgraph",
+                   vsize = 15, 
+                   node.alpha = 0.8,
+                   legend.position = "none", legend.size = NA,
+                   edge.color = c("royalblue", "tomato")))
+
+ggsave(here("Output", "Supplemental", "ega_nl_full_boot_sample.png"), 
+       ega_nl_full_boot_sample$all, height = 12, width = 12)
+
+#stability of dimensions
+ega_nl_full_stability = dimensionStability(ega_nl_full_boot)
+
+ggsave(here("Output", "Supplemental", "ega_nl_full_stability.png"), 
+       ega_nl_full_stability$item.stability$plot)
+```
+
